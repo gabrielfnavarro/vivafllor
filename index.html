@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viva Flor | Atelier Botânico</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-site: #fdfaf7; 
+            --terracota: #b55d21; 
+            --marrom-escuro: #43342d;
+            --white: #ffffff;
+            --border: rgba(67, 52, 45, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: var(--bg-site); 
+            color: var(--marrom-escuro);
+            line-height: 1.6;
+        }
+
+        /* Botão do PDF */
+        .pdf-banner {
+            background: var(--terracota);
+            color: white;
+            text-align: center;
+            padding: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .pdf-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        header { padding: 60px 20px 30px; text-align: center; }
+        header h1 { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--marrom-escuro); font-style: italic; }
+        .slogan { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--terracota); font-style: italic; }
+        
+        .aviso-fotos {
+            max-width: 600px;
+            margin: 0 auto 20px;
+            font-size: 0.85rem;
+            color: #888;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto 60px; padding: 0 20px; }
+
+        .secao-titulo { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 1.8rem; 
+            text-align: center; 
+            margin: 40px 0 20px; 
+            padding-top: 20px;
+        }
+
+        .grid-boutique { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 15px; 
+        }
+
+        .item-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: 0.3s;
+        }
+
+        .item-card:hover { border-color: var(--terracota); }
+
+        .item-info h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 5px; }
+        .valor { color: var(--terracota); font-weight: 600; margin-bottom: 15px; display: block; }
+
+        .btn-add {
+            width: 100%; padding: 10px; background: none; border: 1px solid var(--marrom-escuro);
+            border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase;
+        }
+
+        /* Estilos do Carrinho e Botão Flutuante */
+        #cart-icon {
+            position: fixed; bottom: 30px; right: 30px; background: var(--marrom-escuro);
+            color: white; width: 60px; height: 60px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 999;
+        }
+        #cart-count { position: absolute; top: -5px; right: -5px; background: var(--terracota); border-radius: 50%; width: 22px; height: 22px; font-size: 11px; display: flex; align-items: center; justify-content: center; }
+
+        #cart-sidebar {
+            position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%;
+            background: white; z-index: 1001; transition: 0.4s; padding: 30px; overflow-y: auto;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        }
+        #cart-sidebar.active { right: 0; }
+        .close-cart { background: none; border: none; font-size: 2rem; position: absolute; top: 20px; left: 20px; cursor: pointer; }
+        
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; }
+        .total-box { font-size: 1.2rem; font-weight: 700; color: var(--terracota); text-align: right; margin: 20px 0; }
+
+        input, select { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; }
+        .btn-checkout { background: #27ae60; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: 700; }
+
+        footer { padding: 40px; text-align: center; font-size: 0.8rem; opacity: 0.6; }
+    </style>
+</head>
+<body>
+
+<div class="pdf-banner">
+    <a href="CATALOGO VIVAFLOR.pdf" target="_blank" class="pdf-link">
+        📖 Clique aqui para ver o Catálogo com Fotos (PDF)
+    </a>
+</div>
+
+<header>
+    <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 9px; opacity: 0.6;">Alta Floresta • MT</p>
+    <h1>Viva Flor</h1>
+    <span class="slogan">viva o amor!</span>
+</header>
+
+<div class="aviso-fotos">
+    Consulte as fotos no catálogo em PDF acima e adicione os itens aqui para fechar seu pedido via WhatsApp.
+</div>
+
+<div class="container" id="vitrine"></div>
+
+<div id="cart-icon" onclick="toggleCart()">
+    🛒 <span id="cart-count">0</span>
+</div>
+
+<div id="cart-sidebar">
+    <button class="close-cart" onclick="toggleCart()">×</button>
+    <h2 style="font-family: 'Playfair Display'; margin-top: 40px;">Meu Pedido</h2>
+    
+    <div id="cart-items-list" style="margin-top: 20px;"></div>
+    <div class="total-box">Total: R$ <span id="cart-total">0.00</span></div>
+
+    <div id="finalizar-secao" style="display: none;">
+        <input type="text" id="comprador" placeholder="Seu Nome">
+        <select id="pgto">
+            <option value="Pix">Pix</option>
+            <option value="Cartão">Cartão</option>
+            <option value="Dinheiro">Dinheiro</option>
+        </select>
+        <select id="tipo_envio" onchange="mudarForm()">
+            <option value="retirada">Vou retirar na loja</option>
+            <option value="entrega">Quero entrega</option>
+        </select>
+        <div id="sessao-entrega" style="display:none;">
+            <input type="text" id="recebedor" placeholder="Quem recebe?">
+            <input type="text" id="endereco" placeholder="Endereço completo">
+        </div>
+        <button class="btn-checkout" onclick="enviarWhatsApp()">Enviar para o WhatsApp</button>
+    </div>
+
+    <button id="btn-ir-checkout" class="btn-add" style="background:var(--terracota); color:white; border:none; padding:15px;" onclick="mostrarForm()">Finalizar Pedido</button>
+</div>
+
+<footer>
+    Viva Flor Atelier Botânico<br>
+    Alta Floresta - MT
+</footer>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init();
+
+    const categorias = {
+        "Buquês & Flores": [
+            { nome: "Solitário Love Tradicional", preco: 20 },
+            { nome: "Buquê Mini Encanto (1 rosa)", preco: 45 },
+            { nome: "Buquê Mini Princess (1 rosa + Ferrero)", preco: 65 },
+            { nome: "Buquê Mini Noite Estrelada (2 rosas)", preco: 85 },
+            { nome: "Buquê Mini Amor (2 rosas)", preco: 65 },
+            { nome: "Flower Box (Caixinha com 4 Ferrero)", preco: 120 },
+            { nome: "Ramalhete Toque do Amor (3 rosas)", preco: 100 },
+            { nome: "Buquê Lovely (5 rosas)", preco: 130 },
+            { nome: "Buquê Jardim Secreto (10 rosas)", preco: 200 },
+            { nome: "Buquê Amor Perfeito (12 rosas)", preco: 300 },
+            { nome: "Buquê Passione (20 rosas)", preco: 250 },
+            { nome: "Buquê Passione (50 rosas)", preco: 550 }
+        ],
+        "Arranjos & Cestas": [
+            { nome: "Florescer da Vida (com balão)", preco: 140 },
+            { nome: "Jardim Encantado (balão + 5 rosas)", preco: 160 },
+            { nome: "Pequeno Encanto (com urso)", preco: 180 },
+            { nome: "Aroma e Sabor (Vinho + Chocolates)", preco: 150 },
+            { nome: "Amor a Primeira Taça (Vinho + Taças)", preco: 300 }
+        ],
+        "Chocolates & Mimos": [
+            { nome: "Brigadeiro Gourmet (4 unidades)", preco: 20 },
+            { nome: "Caixa Ferrero Rocher (4 unidades)", preco: 35 },
+            { nome: "Caixa Ferrero Rocher (8 unidades)", preco: 60 },
+            { nome: "Pelúcia Ursinho", preco: 90 },
+            { nome: "Almofada de Coração", preco: 60 }
+        ]
+    };
+
+    let carrinho = [];
+
+    function carregar() {
+        let vitrine = document.getElementById('vitrine');
+        vitrine.innerHTML = "";
+        for (let cat in categorias) {
+            let html = `<h2 class="secao-titulo" data-aos="fade-up">${cat}</h2><div class="grid-boutique">`;
+            categorias[cat].forEach(p => {
+                html += `
+                    <div class="item-card" data-aos="fade-up">
+                        <div class="item-info">
+                            <h3>${p.nome}</h3>
+                            <span class="valor">R$ ${p.preco.toFixed(2)}</span>
+                        </div>
+                        <button class="btn-add" onclick="addAoCarrinho('${p.nome}', ${p.preco})">Adicionar</button>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            vitrine.innerHTML += html;
+        }
+    }
+
+    function addAoCarrinho(nome, preco) {
+        const item = carrinho.find(i => i.nome === nome);
+        if (item) item.qtd++; else carrinho.push({ nome, preco, qtd: 1 });
+        atualizarCarrinho();
+        event.target.innerText = "Adicionado! ✓";
+        setTimeout(() => event.target.innerText = "Adicionar", 1000);
+    }
+
+    function atualizarCarrinho() {
+        const list = document.getElementById('cart-items-list');
+        const count = document.getElementById('cart-count');
+        const totalSpan = document.getElementById('cart-total');
+        let total = 0; let totalItens = 0;
+        list.innerHTML = "";
+
+        carrinho.forEach((item, index) => {
+            total += item.preco * item.qtd;
+            totalItens += item.qtd;
+            list.innerHTML += `
+                <div class="cart-item">
+                    <div><b>${item.nome}</b><br><small>R$ ${item.preco.toFixed(2)}</small></div>
+                    <div>
+                        <button onclick="mudarQtd(${index},-1)">-</button>
+                        <span>${item.qtd}</span>
+                        <button onclick="mudarQtd(${index},1)">+</button>
+                    </div>
+                </div>`;
+        });
+        count.innerText = totalItens;
+        totalSpan.innerText = total.toFixed(2);
+        document.getElementById('btn-ir-checkout').style.display = carrinho.length ? 'block' : 'none';
+    }
+
+    function mudarQtd(i, d) {
+        carrinho[i].qtd += d;
+        if (carrinho[i].qtd <= 0) carrinho.splice(i, 1);
+        atualizarCarrinho();
+    }
+
+    function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('active'); }
+    function mostrarForm() { 
+        document.getElementById('finalizar-secao').style.display = 'block'; 
+        document.getElementById('btn-ir-checkout').style.display = 'none';
+    }
+    function mudarForm() {
+        const t = document.getElementById('tipo_envio').value;
+        document.getElementById('sessao-entrega').style.display = t === 'entrega' ? 'block' : 'none';
+    }
+
+    function enviarWhatsApp() {
+        const nome = document.getElementById('comprador').value;
+        if(!nome) return alert("Diga seu nome");
+        let msg = `*PEDIDO VIVA FLOR*\nCliente: ${nome}\n\n`;
+        carrinho.forEach(i => msg += `• ${i.qtd}x ${i.nome}\n`);
+        msg += `\n*Total: R$ ${document.getElementById('cart-total').innerText}*`;
+        msg += `\nPagamento: ${document.getElementById('pgto').value}`;
+        msg += `\nEntrega: ${document.getElementById('tipo_envio').value === 'entrega' ? document.getElementById('endereco').value : 'Retirada'}`;
+        
+        window.open(`https://wa.me/5566999998877?text=${encodeURIComponent(msg)}`);
+    }
+
+    carregar();
+</script>
+</body>
+</html>
