@@ -98,7 +98,7 @@
             border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase;
         }
 
-        /* Estilos do Carrinho e Botão Flutuante */
+        /* Carrinho Sidebar */
         #cart-icon {
             position: fixed; bottom: 30px; right: 30px; background: var(--marrom-escuro);
             color: white; width: 60px; height: 60px; border-radius: 50%;
@@ -117,8 +117,11 @@
         .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; }
         .total-box { font-size: 1.2rem; font-weight: 700; color: var(--terracota); text-align: right; margin: 20px 0; }
 
-        input, select { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; }
-        .btn-checkout { background: #27ae60; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: 700; }
+        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Montserrat', sans-serif; }
+        textarea { resize: vertical; min-height: 80px; }
+        .label-form { font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; display: block; color: var(--terracota); }
+        
+        .btn-checkout { background: #27ae60; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: 700; margin-top: 10px; }
 
         footer { padding: 40px; text-align: center; font-size: 0.8rem; opacity: 0.6; }
     </style>
@@ -155,20 +158,37 @@
     <div class="total-box">Total: R$ <span id="cart-total">0.00</span></div>
 
     <div id="finalizar-secao" style="display: none;">
+        <label class="label-form">SEUS DADOS</label>
         <input type="text" id="comprador" placeholder="Seu Nome">
+        
+        <label class="label-form">PAGAMENTO</label>
         <select id="pgto">
             <option value="Pix">Pix</option>
             <option value="Cartão">Cartão</option>
             <option value="Dinheiro">Dinheiro</option>
         </select>
+
+        <label class="label-form">CARTÃO DE MENSAGEM?</label>
+        <select id="quer_cartao" onchange="mudarForm()">
+            <option value="nao">Não, obrigado</option>
+            <option value="sim">Sim, quero um cartão</option>
+        </select>
+        
+        <div id="sessao-cartao" style="display:none;">
+            <textarea id="mensagem_cartao" placeholder="Escreva aqui a mensagem para o cartão..."></textarea>
+        </div>
+
+        <label class="label-form">COMO DESEJA RECEBER?</label>
         <select id="tipo_envio" onchange="mudarForm()">
             <option value="retirada">Vou retirar na loja</option>
             <option value="entrega">Quero entrega</option>
         </select>
+
         <div id="sessao-entrega" style="display:none;">
             <input type="text" id="recebedor" placeholder="Quem recebe?">
             <input type="text" id="endereco" placeholder="Endereço completo">
         </div>
+
         <button class="btn-checkout" onclick="enviarWhatsApp()">Enviar para o WhatsApp</button>
     </div>
 
@@ -278,25 +298,57 @@
     }
 
     function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('active'); }
+    
     function mostrarForm() { 
         document.getElementById('finalizar-secao').style.display = 'block'; 
         document.getElementById('btn-ir-checkout').style.display = 'none';
     }
+
     function mudarForm() {
-        const t = document.getElementById('tipo_envio').value;
-        document.getElementById('sessao-entrega').style.display = t === 'entrega' ? 'block' : 'none';
+        // Lógica do Cartão
+        const querCartao = document.getElementById('quer_cartao').value;
+        document.getElementById('sessao-cartao').style.display = querCartao === 'sim' ? 'block' : 'none';
+
+        // Lógica da Entrega
+        const tipoEnvio = document.getElementById('tipo_envio').value;
+        document.getElementById('sessao-entrega').style.display = tipoEnvio === 'entrega' ? 'block' : 'none';
     }
 
     function enviarWhatsApp() {
         const nome = document.getElementById('comprador').value;
-        if(!nome) return alert("Diga seu nome");
-        let msg = `*PEDIDO VIVA FLOR*\nCliente: ${nome}\n\n`;
-        carrinho.forEach(i => msg += `• ${i.qtd}x ${i.nome}\n`);
-        msg += `\n*Total: R$ ${document.getElementById('cart-total').innerText}*`;
-        msg += `\nPagamento: ${document.getElementById('pgto').value}`;
-        msg += `\nEntrega: ${document.getElementById('tipo_envio').value === 'entrega' ? document.getElementById('endereco').value : 'Retirada'}`;
+        if(!nome) return alert("Por favor, informe seu nome.");
         
-        window.open(`https://wa.me/556696872861?text=${encodeURIComponent(msg)}`);
+        let msg = `*PEDIDO VIVA FLOR*\n`;
+        msg += `*Cliente:* ${nome}\n\n`;
+        
+        msg += `*ITENS:*\n`;
+        carrinho.forEach(i => msg += `• ${i.qtd}x ${i.nome}\n`);
+        
+        msg += `\n*TOTAL:* R$ ${document.getElementById('cart-total').innerText}\n`;
+        msg += `*PAGAMENTO:* ${document.getElementById('pgto').value}\n`;
+        
+        // Cartão de Mensagem
+        const querCartao = document.getElementById('quer_cartao').value;
+        if(querCartao === 'sim') {
+            const textoCartao = document.getElementById('mensagem_cartao').value;
+            msg += `*CARTÃO:* Sim\n*MENSAGEM:* "${textoCartao || 'Não informada'}"\n`;
+        } else {
+            msg += `*CARTÃO:* Não\n`;
+        }
+
+        // Entrega
+        const tipoEnvio = document.getElementById('tipo_envio').value;
+        if(tipoEnvio === 'entrega') {
+            msg += `\n*ENTREGA:*\n`;
+            msg += `Para: ${document.getElementById('recebedor').value || 'Não informado'}\n`;
+            msg += `Endereço: ${document.getElementById('endereco').value || 'Não informado'}`;
+        } else {
+            msg += `\n*ENTREGA:* Retirada na Loja`;
+        }
+        
+        // Número de exemplo (ajuste para o seu)
+        const fone = "5566999998877"; 
+        window.open(`https://wa.me/${fone}?text=${encodeURIComponent(msg)}`);
     }
 
     carregar();
