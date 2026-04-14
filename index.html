@@ -26,7 +26,7 @@
             line-height: 1.6;
         }
 
-        /* Botão do PDF */
+        /* Banner PDF */
         .pdf-banner {
             background: var(--terracota);
             color: white;
@@ -74,9 +74,10 @@
         .grid-boutique { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 15px; 
+            gap: 20px; 
         }
 
+        /* --- ANIMAÇÕES E ESTILO DOS CARDS --- */
         .item-card {
             background: var(--white);
             padding: 20px;
@@ -85,17 +86,42 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: 0.3s;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
         }
 
-        .item-card:hover { border-color: var(--terracota); }
+        .item-card:hover { 
+            border-color: var(--terracota); 
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(181, 93, 33, 0.1);
+        }
+
+.item-card img {
+            width: 100%;
+            aspect-ratio: 1 / 1; /* Força o formato 1080x1080 */
+            object-fit: cover;   /* Garante preenchimento total */
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: transform 0.5s ease;
+            background-color: #f9f6f3;
+        }
+
+        .item-card:hover img {
+            transform: scale(1.05); /* Zoom suave sem sair do quadrado */
+        }
 
         .item-info h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 5px; }
         .valor { color: var(--terracota); font-weight: 600; margin-bottom: 15px; display: block; }
 
         .btn-add {
-            width: 100%; padding: 10px; background: none; border: 1px solid var(--marrom-escuro);
-            border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase;
+            width: 100%; padding: 12px; background: none; border: 1px solid var(--marrom-escuro);
+            border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700; text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .btn-add:hover {
+            background: var(--marrom-escuro);
+            color: white;
         }
 
         /* Carrinho Sidebar */
@@ -103,6 +129,7 @@
             position: fixed; bottom: 30px; right: 30px; background: var(--marrom-escuro);
             color: white; width: 60px; height: 60px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 999;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         #cart-count { position: absolute; top: -5px; right: -5px; background: var(--terracota); border-radius: 50%; width: 22px; height: 22px; font-size: 11px; display: flex; align-items: center; justify-content: center; }
 
@@ -118,7 +145,6 @@
         .total-box { font-size: 1.2rem; font-weight: 700; color: var(--terracota); text-align: right; margin: 20px 0; }
 
         input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Montserrat', sans-serif; }
-        textarea { resize: vertical; min-height: 80px; }
         .label-form { font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; display: block; color: var(--terracota); }
         
         .btn-checkout { background: #27ae60; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: 700; margin-top: 10px; }
@@ -128,11 +154,7 @@
 </head>
 <body>
 
-<div class="pdf-banner">
-    <a href="CATALOGO VIVAFLOR.pdf" target="_blank" class="pdf-link">
-        📖 Clique aqui para ver o Catálogo com Fotos (PDF)
-    </a>
-</div>
+
 
 <header>
     <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 9px; opacity: 0.6;">Alta Floresta • MT</p>
@@ -141,7 +163,7 @@
 </header>
 
 <div class="aviso-fotos">
-    Consulte as fotos no catálogo em PDF acima e adicione os itens aqui para fechar seu pedido via WhatsApp.
+    Explore nossa vitrine e adicione os itens para fechar seu pedido via WhatsApp.
 </div>
 
 <div class="container" id="vitrine"></div>
@@ -202,36 +224,45 @@
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init();
+    AOS.init({ duration: 800, once: true });
 
     const categorias = {
         "Buquês & Flores": [
-            { nome: "Solitário Love Tradicional", preco: 20 },
-            { nome: "Buquê Mini Encanto (1 rosa)", preco: 45 },
-            { nome: "Buquê Mini Princess (1 rosa + Ferrero)", preco: 65 },
-            { nome: "Buquê Mini Noite Estrelada (2 rosas)", preco: 85 },
-            { nome: "Buquê Mini Amor (2 rosas)", preco: 65 },
-            { nome: "Flower Box (Caixinha com 4 Ferrero)", preco: 120 },
-            { nome: "Ramalhete Toque do Amor (3 rosas)", preco: 100 },
-            { nome: "Buquê Lovely (5 rosas)", preco: 130 },
-            { nome: "Buquê Jardim Secreto (10 rosas)", preco: 200 },
-            { nome: "Buquê Amor Perfeito (12 rosas)", preco: 300 },
-            { nome: "Buquê Passione (20 rosas)", preco: 250 },
-            { nome: "Buquê Passione (50 rosas)", preco: 550 }
+            { nome: "Solitário Love Tradicional", preco: 20, img: "2.jpg.jpeg" },
+            { nome: "Buquê Mini Encanto (1 rosa)", preco: 45, img: "3.jpg.jpeg" },
+            { nome: "Buquê Mini Princess (1 rosa + Ferrero)", preco: 65, img: "4.jpg.jpeg" },
+            { nome: "Buquê Mini Noite Estrelada (2 rosas)", preco: 85, img: "5.jpg.jpeg" },
+            { nome: "Buquê Mini Amor (2 rosas)", preco: 65, img: "6.jpg.jpeg" },
+            { nome: "Flower Box (4 Ferrero)", preco: 120, img: "7.jpg.jpeg" },
+            { nome: "Ramalhete Toque do Amor (3 rosas)", preco: 100, img: "8.jpg.jpeg" },
+            { nome: "Buquê Lovely (5 rosas)", preco: 130, img: "9.jpg.jpeg" },
+            { nome: "Buquê Jardim Secreto (10 rosas)", preco: 200, img: "10.jpg.jpeg" },
+            { nome: "Doce Buquê (10 rosas + 5 Ouro Branco)", preco: 190, img: "13.jpg.jpeg" },
+            { nome: "Buquê Van Gogh (6 girassóis + 6 rosas)", preco: 320, img: "12.jpg.jpeg" },
+            { nome: "Buquê Amor Perfeito (12 rosas)", preco: 300, img: "11.jpg.jpeg" },
+            { nome: "Buquê Passione (30 rosas)", preco: 350, img: "14.jpg.jpeg" },
+            { nome: "Buquê Passione (50 rosas)", preco: 550, img: "15.jpg.jpeg" }
         ],
         "Arranjos & Cestas": [
-            { nome: "Florescer da Vida (com balão)", preco: 140 },
-            { nome: "Jardim Encantado (balão + 5 rosas)", preco: 160 },
-            { nome: "Pequeno Encanto (com urso)", preco: 180 },
-            { nome: "Aroma e Sabor (Vinho + Chocolates)", preco: 150 },
-            { nome: "Amor a Primeira Taça (Vinho + Taças)", preco: 300 }
+            { nome: "Florescer da Vida (com balão)", preco: 140, img: "16.jpg.jpeg" },
+            { nome: "Jardim Encantado (balão + 5 rosas)", preco: 160, img: "17.jpg.jpeg" },
+            { nome: "Pequeno Encanto (com ursinho)", preco: 180, img: "18.jpg.jpeg" },
+            { nome: "Aroma e Sabor (vinho + chocolates)", preco: 150, img: "28.jpg.jpeg" },
+            { nome: "Aroma e Sabor com Balão", preco: 180, img: "30.jpg.jpeg" },
+            { nome: "Ursinho Apaixonado (urso + vinho + doces)", preco: 220, img: "31.jpg.jpeg" },
+            { nome: "Amor à Primeira Taça (vinho + 2 taças + doces)", preco: 300, img: "29.jpg.jpeg" },
+            { nome: "Mestre do Chopp (2 garrafas + caneca + doces)", preco: 200, img: "32.jpg.jpeg" },
+            { nome: "Hora da Cerveja (4 garrafas + doces)", preco: 160, img: "33.jpg.jpeg" }
         ],
         "Chocolates & Mimos": [
-            { nome: "Brigadeiro Gourmet (4 unidades)", preco: 20 },
-            { nome: "Caixa Ferrero Rocher (4 unidades)", preco: 35 },
-            { nome: "Caixa Ferrero Rocher (8 unidades)", preco: 60 },
-            { nome: "Pelúcia Ursinho", preco: 90 },
-            { nome: "Almofada de Coração", preco: 60 }
+            { nome: "Brigadeiro Gourmet (4 unidades)", preco: 20, img: "19.jpg.jpeg" },
+            { nome: "Ferrero Rocher (3 unidades)", preco: 20, img: "20.jpg.jpeg" },
+            { nome: "Ferrero Rocher (4 unidades)", preco: 35, img: "22.jpg.jpeg" },
+            { nome: "Caixa Ferrero Rocher (8 unidades)", preco: 60, img: "21.jpg.jpeg" },
+            { nome: "Ursinho de Pelúcia", preco: 90, img: "23.jpg.jpeg" },
+            { nome: "Mini Almofada (frases sortidas)", preco: 40, img: "24.jpg.jpeg" },
+            { nome: "Almofada (frases sortidas)", preco: 60, img: "25.jpg.jpeg" },
+            { nome: "Coração Decorativo", preco: 50, img: "26.jpg.jpeg" }
         ]
     };
 
@@ -245,6 +276,7 @@
             categorias[cat].forEach(p => {
                 html += `
                     <div class="item-card" data-aos="fade-up">
+                        <img src="${p.img}" alt="${p.nome}">
                         <div class="item-info">
                             <h3>${p.nome}</h3>
                             <span class="valor">R$ ${p.preco.toFixed(2)}</span>
@@ -272,7 +304,6 @@
         const totalSpan = document.getElementById('cart-total');
         let total = 0; let totalItens = 0;
         list.innerHTML = "";
-
         carrinho.forEach((item, index) => {
             total += item.preco * item.qtd;
             totalItens += item.qtd;
@@ -298,57 +329,21 @@
     }
 
     function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('active'); }
-    
-    function mostrarForm() { 
-        document.getElementById('finalizar-secao').style.display = 'block'; 
-        document.getElementById('btn-ir-checkout').style.display = 'none';
-    }
-
+    function mostrarForm() { document.getElementById('finalizar-secao').style.display = 'block'; document.getElementById('btn-ir-checkout').style.display = 'none'; }
     function mudarForm() {
-        // Lógica do Cartão
-        const querCartao = document.getElementById('quer_cartao').value;
-        document.getElementById('sessao-cartao').style.display = querCartao === 'sim' ? 'block' : 'none';
-
-        // Lógica da Entrega
-        const tipoEnvio = document.getElementById('tipo_envio').value;
-        document.getElementById('sessao-entrega').style.display = tipoEnvio === 'entrega' ? 'block' : 'none';
+        document.getElementById('sessao-cartao').style.display = document.getElementById('quer_cartao').value === 'sim' ? 'block' : 'none';
+        document.getElementById('sessao-entrega').style.display = document.getElementById('tipo_envio').value === 'entrega' ? 'block' : 'none';
     }
 
     function enviarWhatsApp() {
         const nome = document.getElementById('comprador').value;
         if(!nome) return alert("Por favor, informe seu nome.");
-        
-        let msg = `*PEDIDO VIVA FLOR*\n`;
-        msg += `*Cliente:* ${nome}\n\n`;
-        
-        msg += `*ITENS:*\n`;
+        let msg = `*PEDIDO VIVA FLOR*\n*Cliente:* ${nome}\n\n*ITENS:*\n`;
         carrinho.forEach(i => msg += `• ${i.qtd}x ${i.nome}\n`);
-        
-        msg += `\n*TOTAL:* R$ ${document.getElementById('cart-total').innerText}\n`;
-        msg += `*PAGAMENTO:* ${document.getElementById('pgto').value}\n`;
-        
-        // Cartão de Mensagem
-        const querCartao = document.getElementById('quer_cartao').value;
-        if(querCartao === 'sim') {
-            const textoCartao = document.getElementById('mensagem_cartao').value;
-            msg += `*CARTÃO:* Sim\n*MENSAGEM:* "${textoCartao || 'Não informada'}"\n`;
-        } else {
-            msg += `*CARTÃO:* Não\n`;
-        }
-
-        // Entrega
-        const tipoEnvio = document.getElementById('tipo_envio').value;
-        if(tipoEnvio === 'entrega') {
-            msg += `\n*ENTREGA:*\n`;
-            msg += `Para: ${document.getElementById('recebedor').value || 'Não informado'}\n`;
-            msg += `Endereço: ${document.getElementById('endereco').value || 'Não informado'}`;
-        } else {
-            msg += `\n*ENTREGA:* Retirada na Loja`;
-        }
-        
-        // Número de exemplo (ajuste para o seu)
-        const fone = "556696872861"; 
-        window.open(`https://wa.me/${fone}?text=${encodeURIComponent(msg)}`);
+        msg += `\n*TOTAL:* R$ ${document.getElementById('cart-total').innerText}\n*PAGAMENTO:* ${document.getElementById('pgto').value}\n`;
+        msg += `*CARTÃO:* ${document.getElementById('quer_cartao').value === 'sim' ? document.getElementById('mensagem_cartao').value : 'Não'}\n`;
+        msg += document.getElementById('tipo_envio').value === 'entrega' ? `\n*ENTREGA:* ${document.getElementById('recebedor').value} - ${document.getElementById('endereco').value}` : `\n*RETIRADA NA LOJA*`;
+        window.open(`https://wa.me/556696872861?text=${encodeURIComponent(msg)}`);
     }
 
     carregar();
